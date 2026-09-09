@@ -18,8 +18,8 @@
   --disp:"Oswald","Arial Narrow",sans-serif; --mono:"Courier Prime","Courier New",monospace; --pad:clamp(16px,3vw,40px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -37,22 +37,29 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .key img{width:15px;height:15px;object-fit:contain}
 .key img.av{width:22px;height:22px;border:1px solid rgba(230,226,216,.5)}
 
-/* hero: the garage, the clock, the name */
-.hero{position:relative;min-height:100svh;display:grid;align-items:end;overflow:hidden}
-.hero .shot{position:absolute;inset:0}
-.hero .shot img{width:100%;height:100%;object-fit:cover;object-position:60% 50%;transform:scale(1.08) translateX(2%);animation:pan 28s ease-out forwards;filter:saturate(.8) contrast(1.06)}
-@keyframes pan{to{transform:scale(1.14) translateX(-1%)}}
-.hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,13,.35),rgba(10,11,13,0) 30%,rgba(10,11,13,.2) 60%,rgba(10,11,13,.96))}
+/* hero: the garage, one push in, six steps of the shift, scrubbed by the scroll */
+.hero{position:relative;height:560vh}
+.sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#0a0b0d}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+.crt{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(rgba(0,0,0,.18) 0 1px,transparent 1px 3px);opacity:.45}
+.hero .veil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(10,11,13,.3),rgba(10,11,13,0) 30%,rgba(10,11,13,.15) 60%,rgba(10,11,13,.94))}
 .wrap{position:relative;z-index:2;width:min(1180px,100%);margin:0 auto;padding:0 var(--pad)}
-.hero .wrap{padding-bottom:calc(var(--pad) + 8px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px}
+.hero .wrap{position:absolute;left:0;right:0;bottom:0;padding-bottom:calc(var(--pad) + 8px);display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px}
 .clock{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
-.clock b{display:block;font-family:var(--disp);font-weight:700;font-size:clamp(34px,5vw,64px);line-height:1;letter-spacing:.02em;color:var(--neon);text-shadow:0 0 18px rgba(155,231,201,.45);font-variant-numeric:tabular-nums}
+.clock b{display:block;font-family:var(--disp);font-weight:700;font-size:clamp(34px,5vw,64px);line-height:1;letter-spacing:.02em;color:var(--neon);text-shadow:0 0 18px rgba(155,231,201,.45);font-variant-numeric:tabular-nums;transition:color .6s,text-shadow .6s}
+.clock b.warm{color:var(--sodium);text-shadow:0 0 18px rgba(233,150,58,.45)}
+.clock b.late{color:#9fb4ff;text-shadow:0 0 18px rgba(120,150,255,.45)}
 h1{font-family:var(--disp);font-weight:700;font-size:clamp(96px,22vw,300px);line-height:.82;letter-spacing:-.01em;color:var(--paper);text-shadow:0 12px 50px rgba(0,0,0,.8)}
-h1 i{font-style:normal;color:var(--sodium)}
-.said{margin-top:12px;max-width:44ch;font-size:14px;color:rgba(230,226,216,.82)}
+.said{margin-top:12px;max-width:44ch;font-size:14px;color:rgba(230,226,216,.82);min-height:2.6em}
 .said b{font-weight:700;color:var(--paper)}
+.said span{display:block;transition:opacity .4s}
+.said span.out{opacity:0}
 .tag{font-family:var(--disp);font-size:clamp(22px,3vw,40px);letter-spacing:.06em;text-transform:uppercase;color:var(--sodium);text-align:right;line-height:1}
 .tag small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--dim);margin-top:6px}
+.hint{position:absolute;right:var(--pad);top:calc(var(--pad) + 48px);z-index:3;font-family:var(--mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);transition:opacity .4s}
+.hint em{font-style:normal;display:inline-block;margin-left:6px;animation:nod 1.4s ease-in-out infinite}
+@keyframes nod{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+.hint.gone{opacity:0}
 
 /* the shift: a time card, punched eight times */
 .shift{padding:clamp(48px,8vw,110px) 0 clamp(30px,5vw,60px)}
@@ -120,6 +127,7 @@ h1 i{font-style:normal;color:var(--sodium)}
 @media (max-width:900px){
   .hero .wrap{grid-template-columns:1fr}
   .tag{text-align:left}
+  .hint{top:calc(var(--pad) + 44px);right:auto;left:var(--pad)}
   .punch{grid-template-columns:86px 110px 1fr;gap:12px}
   .punch .t{font-size:26px}
   .punch .w{font-size:17px}
@@ -138,17 +146,19 @@ h1 i{font-style:normal;color:var(--sodium)}
   <a class="key" data-link="x" href="https://x.com" aria-label="X"><img src="assets/ic-x.svg" alt="X" /></a>
 </nav>
 
-<header class="hero">
-  <div class="shot"><img src="assets/hero.webp" alt="A rat headed man in a gold suit standing in an empty parking garage at night" /></div>
-  <div class="veil"></div>
-  <div class="wrap">
-    <div>
-      <div class="clock">Shift clock <b id="clock">00:00:00</b></div>
-      <h1><span data-name>ret</span></h1>
-      <p class="said">He runs the race every night in the suit he bought for winning it.
-        <b>There is no finish line, there is a shift.</b></p>
+<header class="hero" id="hero">
+  <div class="sticky">
+    <canvas id="cv"></canvas>
+    <div class="crt"></div><div class="veil"></div>
+    <div class="hint" id="hint">Scroll<em>&#8595;</em></div>
+    <div class="wrap">
+      <div>
+        <div class="clock">Shift clock <b id="clock">04:10</b></div>
+        <h1><span data-name>ret</span></h1>
+        <p class="said"><span id="said">He runs the race every night in the suit he bought for winning it. <b>There is no finish line, there is a shift.</b></span></p>
+      </div>
+      <div class="tag"><span data-ticker>$ret</span><small id="where">04:10 &#183; level minus two</small></div>
     </div>
-    <div class="tag"><span data-ticker>$ret</span><small>Rat race &#183; Robinhood Chain</small></div>
   </div>
 </header>
 
@@ -220,10 +230,66 @@ h1 i{font-style:normal;color:var(--sodium)}
   document.querySelectorAll('[data-link="dex"]').forEach(function(a){ a.href = HAS ? window.DEX_HOME + '/' + CA : window.DEX_HOME; a.target = '_blank'; a.rel = 'noopener'; });
   document.querySelectorAll('[data-link="x"]').forEach(function(a){ a.href = S.X_URL || 'https://x.com'; a.target = '_blank'; a.rel = 'noopener'; });
 
-  /* the shift clock is your clock: you are in it too */
-  var ck = document.getElementById('clock');
-  function tick(){ var d = new Date(), p = function(n){ return (n < 10 ? '0' : '') + n; }; ck.textContent = p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()); }
-  tick(); setInterval(tick, 1000);
+  /* the push in: six frames of one garage, one shift long, the scroll is the clock */
+  var N = 6, IM = [], hero = document.getElementById('hero'), cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var ck = document.getElementById('clock'), said = document.getElementById('said'), where = document.getElementById('where'), hint = document.getElementById('hint');
+  var lastKey = -1, dirty = true;
+  for(var i = 0; i < N; i++){ var im = new Image(); im.onload = function(){ dirty = true; }; im.src = 'assets/f' + (i + 1) + '.jpg'; IM[i] = im; }
+  var T = [250, 345, 420, 1170, 1420, 1560]; /* minutes: 04:10 05:45 07:00 19:30 23:40 02:00 */
+  var L = [
+    ['level minus two', 'He runs the race every night in the suit he bought for winning it. <b>There is no finish line, there is a shift.</b>'],
+    ['still level minus two', 'The car is not his. <b>The space is, until eight.</b>'],
+    ['the tube above him', 'It flickers. <b>He has learned to stand where it does not.</b>'],
+    ['sodium hour', 'Everyone else clocked out. <b>He clocked in again.</b>'],
+    ['the late one', 'The note has been in that hand since morning. <b>Nothing has asked for it.</b>'],
+    ['closing in', 'This is the face at two. <b>He will be here at four.</b>']
+  ];
+  function resize(){
+    var d = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(1, Math.floor(cv.clientWidth * d)), h = Math.max(1, Math.floor(cv.clientHeight * d));
+    if(cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; dirty = true; }
+    ctx.imageSmoothingEnabled = false;
+  }
+  function paint(im, alpha){
+    if(!im || !im.complete || !im.naturalWidth) return;
+    ctx.globalAlpha = alpha;
+    var s = Math.max(cv.width / im.naturalWidth, cv.height / im.naturalHeight), w = im.naturalWidth * s, h = im.naturalHeight * s;
+    ctx.drawImage(im, (cv.width - w) / 2, (cv.height - h) * 0.4, w, h);
+    ctx.globalAlpha = 1;
+  }
+  function draw(idx, frac){
+    resize();
+    var key = idx * 100 + Math.round(frac * 24);
+    if(key === lastKey && !dirty) return;
+    lastKey = key; dirty = false;
+    ctx.fillStyle = '#0a0b0d'; ctx.fillRect(0, 0, cv.width, cv.height);
+    paint(IM[idx], 1);
+    if(frac > 0 && IM[idx + 1]) paint(IM[idx + 1], frac);
+  }
+  var curK = -1, lastMin = -1;
+  function words(k){
+    if(k === curK) return; var first = curK < 0; curK = k;
+    ck.classList.toggle('warm', k === 3); ck.classList.toggle('late', k >= 4);
+    if(first){ said.innerHTML = L[k][1]; return; }
+    said.classList.add('out');
+    setTimeout(function(){ said.innerHTML = L[curK][1]; said.classList.remove('out'); }, 220);
+  }
+  function clock(f){
+    var i = Math.min(N - 2, Math.floor(f)), u = f - i, m = Math.round(T[i] + (T[i + 1] - T[i]) * u) % 1440;
+    if(m === lastMin) return; lastMin = m;
+    var t = (m / 60 | 0), s = ('0' + t).slice(-2) + ':' + ('0' + (m % 60)).slice(-2);
+    ck.textContent = s; where.textContent = s + ' \u00b7 ' + L[Math.min(N - 1, Math.round(f))][0];
+  }
+  function loop(){
+    var r = hero.getBoundingClientRect(), span = hero.offsetHeight - (innerHeight || 800);
+    var p = span > 0 ? Math.max(0, Math.min(1, -r.top / span)) : 0;
+    var f = p * (N - 1), idx = Math.min(N - 1, Math.floor(f)), frac = f - idx;
+    draw(idx, frac); clock(f); words(Math.min(N - 1, Math.round(f)));
+    hint.classList.toggle('gone', p > .03);
+    requestAnimationFrame(loop);
+  }
+  addEventListener('resize', function(){ lastKey = -1; dirty = true; });
+  requestAnimationFrame(loop);
 
   /* the contract lives on the badge, where the employee number goes */
   var ca = document.getElementById('ca'), hint = document.getElementById('hint');
